@@ -187,6 +187,25 @@ void UCT_EventSchedulerSubsystem::HandleTimeUpdated(int32 NewDay, int32 NewMinut
 	}
 }
 
+int32 UCT_EventSchedulerSubsystem::GetScheduledEventCount() const
+{
+	return Events.Num();
+}
+
+TArray<FName> UCT_EventSchedulerSubsystem::GetScheduledEventNames() const
+{
+	TArray<FName> Names;
+	Names.Reserve(Events.Num());
+
+	for (const FCT_ScheduledEvent& Event : Events)
+	{
+		Names.Add(Event.DebugName);
+	}
+
+	return Names;
+}
+
+
 void UCT_EventSchedulerSubsystem::EvaluateAndFire(int32 Day, ECT_TimeBlock Block)
 {
 	for (int32 i = Events.Num() - 1; i >= 0; --i)

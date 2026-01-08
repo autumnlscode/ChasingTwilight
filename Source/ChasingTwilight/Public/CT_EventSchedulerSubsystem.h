@@ -35,10 +35,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CT|Schedule")
 	int32 GetRegisteredEventCount() const { return Events.Num(); }
 
-	UFUNCTION(BlueprintPure, Category = "CT|Schedule")
+
+
+	UFUNCTION(BlueprintPure, Category = "CT|Schedule|Debug")
 	FName GetLastFiredEventName() const { return LastFiredEventName; }
 
-	
 
 
 	UFUNCTION(BlueprintPure, Category = "CT|Schedule|Debug")
@@ -50,6 +51,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CT|Schedule|Debug")
 	FText GetScheduledEventDebugMultiline() const;
 
+	UFUNCTION(BlueprintPure, Category = "CT|Schedule|Debug")
+	int32 GetScheduledEventCount() const;
+
+	UFUNCTION(BlueprintPure, Category = "CT|Schedule|Debug")
+	TArray<FName> GetScheduledEventNames() const;
 
 
 

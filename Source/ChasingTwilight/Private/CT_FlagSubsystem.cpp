@@ -17,6 +17,12 @@ bool UCT_FlagSubsystem::HasFlag(FGameplayTag Flag) const
 	return Flag.IsValid() && ActiveFlags.HasTagExact(Flag);
 }
 
+int32 UCT_FlagSubsystem::GetFlagCount() const
+{
+	return GetAllFlags().Num();
+}
+
+
 bool UCT_FlagSubsystem::SetFlag(FGameplayTag Flag, bool bIsSet)
 {
 	if (!Flag.IsValid())

@@ -5,6 +5,7 @@
 #include "GameplayTagContainer.h"
 #include "CT_FlagSubsystem.generated.h"
 
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCT_OnFlagChanged, FGameplayTag, Flag, bool, bIsSet);
 
 
@@ -34,8 +35,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CT|Flags|Debug")
 	FGameplayTagContainer GetAllFlags() const;
 
+	UFUNCTION(BlueprintPure, Category = "CT|Flags|Debug")
+	int32 GetFlagCount() const;
+
+
 	UPROPERTY(BlueprintAssignable, Category = "CT|Flags")
 	FCT_OnFlagChanged OnFlagChanged;
+
+	
+
 
 private:
 	UPROPERTY()
