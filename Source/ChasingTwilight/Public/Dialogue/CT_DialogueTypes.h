@@ -60,11 +60,18 @@ struct FCT_DialogueSessionState
 	TObjectPtr<UCT_DialogueDataAsset> Asset = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CT|Dialogue")
-	TWeakObjectPtr<UObject> Speaker;
+	TWeakObjectPtr<AActor> Speaker;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CT|Dialogue")
+	TWeakObjectPtr<AActor> Interactor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CT|Dialogue")
 	FName CurrentNodeId = NAME_None;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CT|Dialogue")
 	bool bInDialogue = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CT|Dialogue")
+	bool bAwaitingClose = false;
+
 };

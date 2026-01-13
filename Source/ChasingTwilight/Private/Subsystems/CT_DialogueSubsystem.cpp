@@ -27,7 +27,7 @@ void UCT_DialogueSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
-bool UCT_DialogueSubsystem::StartDialogue(UCT_DialogueDataAsset* DialogueAsset, UObject* Speaker)
+bool UCT_DialogueSubsystem::StartDialogue(UCT_DialogueDataAsset* DialogueAsset, AActor* Speaker, AActor* Interactor)
 {
 	if (!DialogueAsset)
 	{
@@ -37,8 +37,14 @@ bool UCT_DialogueSubsystem::StartDialogue(UCT_DialogueDataAsset* DialogueAsset, 
 
 	Session.Asset = DialogueAsset;
 	Session.Speaker = Speaker;
+	Session.Interactor = Interactor;
 	Session.CurrentNodeId = DialogueAsset->StartNodeId;
 	Session.bInDialogue = true;
+	Session.bAwaitingClose = false;
+
+
+	BroadcastDialogueState(ECT_DialogueState::Started);
+
 
 	Advance(); // Let Advance do the actual evaluation/speaking
 	return true;
@@ -51,9 +57,14 @@ void UCT_DialogueSubsystem::Advance()
 		return;
 	}
 
+	if (Session.bAwaitingClose)
+	{
+		return;
+	}
+
 	if (Session.CurrentNodeId.IsNone())
 	{
-		EndDialogue();
+		Session.bAwaitingClose = true;
 		return;
 	}
 
@@ -68,6 +79,18 @@ void UCT_DialogueSubsystem::Advance()
 	SpeakNodeAndAdvanceState(Node);
 }
 
+void UCT_DialogueSubsystem::CloseDialogue()
+{
+	if (!Session.bInDialogue)
+	{
+		return;
+	}
+	
+	EndDialogue();
+}
+
+
+
 void UCT_DialogueSubsystem::EndDialogue()
 {
 	if (!Session.bInDialogue)
@@ -75,14 +98,17 @@ void UCT_DialogueSubsystem::EndDialogue()
 		return;
 	}
 
+	BroadcastDialogueState(ECT_DialogueState::Ended);
+
 	Session.bInDialogue = false;
 	Session.Asset = nullptr;
 	Session.Speaker.Reset();
+	Session.Interactor.Reset();
 	Session.CurrentNodeId = NAME_None;
+	Session.bAwaitingClose = false;
 
 	LastSpokenLine = FText::GetEmpty();
 
-	OnDialogueEnded.Broadcast();
 }
 
 bool UCT_DialogueSubsystem::FindNodeIndexById(const UCT_DialogueDataAsset* Asset, FName NodeId, int32& OutIndex) const
@@ -183,7 +209,7 @@ void UCT_DialogueSubsystem::SpeakNodeAndAdvanceState(const FCT_DialogueNode& Sta
 			Session.CurrentNodeId = Node.NextNodeId;
 			if (Session.CurrentNodeId.IsNone())
 			{
-				EndDialogue();
+				Session.bAwaitingClose = true;
 			}
 			return;
 		}
@@ -237,3 +263,21 @@ void UCT_DialogueSubsystem::ApplyNodeSideEffects(const FCT_DialogueNode& Node)
 	}
 }
 
+void UCT_DialogueSubsystem::BroadcastDialogueState(ECT_DialogueState State)
+{
+	AActor* Speaker = Session.Speaker.Get();      // or Session.Speaker if raw
+	AActor* Interactor = Session.Interactor.Get();
+
+	// Unified event (recommended for PlayerController binding)
+	OnDialogueStateChanged.Broadcast(State, Speaker, Interactor);
+
+	// Convenience events (keep for BP compatibility)
+	if (State == ECT_DialogueState::Started)
+	{
+		OnDialogueStarted.Broadcast(Speaker, Interactor);
+	}
+	else
+	{
+		OnDialogueEnded.Broadcast(Speaker, Interactor);
+	}
+}
