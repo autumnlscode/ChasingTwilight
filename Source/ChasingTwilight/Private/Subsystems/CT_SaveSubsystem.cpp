@@ -13,6 +13,7 @@ void UCT_SaveSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 	TimeSubsystem = GetGameInstance()->GetSubsystem<UCT_TimeSubsystem>();
 	FlagSubsystem = GetGameInstance()->GetSubsystem<UCT_FlagSubsystem>();
+	
 
 	if (TimeSubsystem)
 	{
@@ -22,6 +23,7 @@ void UCT_SaveSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	{
 		FlagSubsystem->OnFlagChanged.AddDynamic(this, &UCT_SaveSubsystem::HandleFlagChanged);
 	}
+	
 
 	UE_LOG(LogTemp, Log, TEXT("[CT] SaveSubsystem Initialize (Slot=%s)"), *SlotName);
 }
@@ -65,7 +67,10 @@ void UCT_SaveSubsystem::HandleTimeUpdated(int32 /*NewDay*/, int32 /*NewMinutes*/
 
 void UCT_SaveSubsystem::HandleFlagChanged(FGameplayTag /*Flag*/, bool /*bIsSet*/)
 {
-	SetDirty(true);
+	if (!bIsApplyingSave)
+	{
+		SetDirty(true);
+	}
 }
 
 UCT_SaveGame* UCT_SaveSubsystem::BuildSaveObject() const
@@ -103,6 +108,21 @@ UCT_SaveGame* UCT_SaveSubsystem::BuildSaveObject() const
 		else if (NG.IsValid() && FlagSubsystem->HasFlag(NG)) SaveObj->CycleTag = NG;
 	}
 
+	UWorld* World = GetWorld();
+	APawn* PlayerPawn = World ? UGameplayStatics::GetPlayerPawn(World, 0) : nullptr;
+
+	if (PlayerPawn)
+	{
+		SaveObj->PlayerTransform = PlayerPawn->GetActorTransform();
+		SaveObj->bHasPlayerTransform = true;
+	}
+	else
+	{
+		SaveObj->bHasPlayerTransform = false;
+	}
+
+
+
 	return SaveObj;
 }
 
@@ -132,6 +152,27 @@ void UCT_SaveSubsystem::ApplySaveObject(const UCT_SaveGame* SaveObj) const
 			FlagSubsystem->SetFlag(SaveObj->CycleTag, true);
 		}
 	}
+}
+
+void UCT_SaveSubsystem::ApplyLoadedPlayerState(APawn* Pawn)
+{
+	if (!Pawn || !LastLoadedSave) return;
+	if (LastLoadedSave->bHasPlayerTransform) return;
+	
+	Pawn->SetActorTransform(
+		LastLoadedSave->PlayerTransform, 
+		false, 
+		nullptr, 
+		ETeleportType::TeleportPhysics
+	);
+	
+}
+
+void UCT_SaveSubsystem::ApplyLoadedStateToPlayerPawn()
+{
+	UWorld* World = GetWorld();
+	APawn* PlayerPawn = World ? UGameplayStatics::GetPlayerPawn(World, 0) : nullptr;
+	ApplyLoadedPlayerState(PlayerPawn);
 }
 
 bool UCT_SaveSubsystem::WriteSaveNow()

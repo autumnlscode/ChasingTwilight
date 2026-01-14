@@ -12,9 +12,16 @@ class CHASINGTWILIGHT_API UCT_SaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
-	// Save format versioning (so future-you can evolve safely)
+	// Save format versioning 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CT|Save")
-	int32 SaveVersion = 1;
+	int32 SaveVersion = 2;
+
+	// --- Player ---
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CT|Save|Player")
+	bool bHasPlayerTransform = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CT|Save|Player")
+	FTransform PlayerTransform;
 
 	// --- Time ---
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CT|Save|Time")
