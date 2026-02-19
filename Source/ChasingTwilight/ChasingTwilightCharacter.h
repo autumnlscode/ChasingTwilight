@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "Interaction/CT_InteractionComponent.h"
 #include "ChasingTwilightCharacter.generated.h"
 
 class USpringArmComponent;
@@ -30,6 +31,10 @@ class AChasingTwilightCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CT|Components", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCT_InteractionComponent> InteractionComponent;
+
 	
 protected:
 
@@ -84,6 +89,10 @@ public:
 	/** Handles jump pressed inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
+
+	UFUNCTION(BlueprintPure, Category = "CT|Interaction")
+	UCT_InteractionComponent* GetInteractionComponent() const { return InteractionComponent; }
+
 
 public:
 
