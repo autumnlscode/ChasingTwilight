@@ -159,12 +159,12 @@ Content/
 
 ## Screenshots / GIFs
 
-Add screenshots or short GIFs here showing:
+### Debug Overlay
+![Debug Overlay]<img src="Docs/Images/debug-overlay.png" width="600"/>
 
-Debug overlay in action
-Interaction prompt and test actor
-Dialogue flow
-Example runtime state in PIE
+
+### Dialogue System
+![Dialogue Demo]<img src="Docs/Images/dialogue-example.gif" width="600"/>
 
 ---
 
