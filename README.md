@@ -160,11 +160,11 @@ Content/
 ## Screenshots / GIFs
 
 ### Debug Overlay
-![Debug Overlay]<img src="Docs/Images/debug-overlay.png" width="600"/>
+<img src="Docs/Images/debug-overlay.png" width="600"/>
 
 
 ### Dialogue System
-![Dialogue Demo]<img src="Docs/Images/dialogue-example.gif" width="600"/>
+<img src="Docs/Images/dialogue-example.gif" width="600"/>
 
 ---
 
