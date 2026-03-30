@@ -143,3 +143,53 @@ Content/
   UI/
 
 ```
+
+---
+
+## Running the Project
+1. Clone this repository
+2. Open the `.uproject file` in Unreal Engine 5
+3. Build the project if prompted
+4. Launch the test map / default startup map
+5. Press Play in Editor
+
+| Note: This repository is a systems prototype and uses placeholder or in-progress content.
+
+---
+
+## Screenshots / GIFs
+
+Add screenshots or short GIFs here showing:
+
+Debug overlay in action
+Interaction prompt and test actor
+Dialogue flow
+Example runtime state in PIE
+
+---
+
+## What This Project Demonstrates
+- Strong foundation in Unreal Engine systems design
+- Ability to architect reusable gameplay systems
+- Practical debugging and iteration workflows
+- Technical design decisions that support narrative and systemic gameplay
+- Clean separation between code systems and design-facing tools
+
+---
+
+## Future Work
+
+Planned next steps include:
+
+- Expanding interaction polish
+- Refining camera authority and state transitions
+- Building a small polished prototype hub
+- Connecting systems to a more representative gameplay slice
+
+---
+
+About the Game
+
+**Chasing Twilight** is a narrative-driven RPG blending magical transformations, time-loop-inspired progression, dynamic world systems, and exploration.
+
+This repository focuses on the foundational systems powering that larger vision.
