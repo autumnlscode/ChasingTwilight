@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
 #include "GameplayTagContainer.h"
+#include "Exploration/CT_DiscoveryTypes.h"
 #include "Subsystems/CT_TimeSubsystem.h" // for ECT_Season
 #include "CT_SaveGame.generated.h"
 
@@ -40,4 +41,8 @@ public:
 	// --- Cycle ---
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CT|Save|Cycle")
 	FGameplayTag CycleTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CT|Save|Exploration")
+	TArray<FCTDiscoveryRecord> Discoveries;
+
 };

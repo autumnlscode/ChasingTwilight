@@ -4,11 +4,13 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "GameplayTagContainer.h"
 #include "Subsystems/CT_TimeSubsystem.h" // for ECT_TimeBlock
+#include "Exploration/CT_DiscoveryTypes.h"
 #include "CT_SaveSubsystem.generated.h"
 
 class UCT_SaveGame;
 class UCT_TimeSubsystem;
 class UCT_FlagSubsystem;
+class UCT_ExplorationSubsystem;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCT_OnSaveLoaded, UCT_SaveGame*, SaveObject);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCT_OnSaveWritten, bool, bSuccess);
@@ -72,13 +74,18 @@ private:
 	void ApplyLoadedPlayerState(APawn* Pawn);
 	void HandleTimeUpdated(int32 NewDay, int32 NewMinutes, ECT_TimeBlock NewBlock);
 	void HandleFlagChanged(FGameplayTag Flag, bool bIsSet);
+	void HandleDiscoveryAdded(const FCTDiscoveryRecord& Record);
 
 private:
+
 	UPROPERTY()
 	TObjectPtr<UCT_TimeSubsystem> TimeSubsystem;
 
 	UPROPERTY()
 	TObjectPtr<UCT_FlagSubsystem> FlagSubsystem;
+
+	UPROPERTY()
+	TObjectPtr<UCT_ExplorationSubsystem> ExplorationSubsystem;
 
 	UPROPERTY()
 	TObjectPtr<UCT_SaveGame> LastLoadedSave;

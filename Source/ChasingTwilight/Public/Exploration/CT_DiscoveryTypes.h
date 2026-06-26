@@ -8,6 +8,7 @@
 #include "Subsystems/CT_TimeSubsystem.h"
 #include "CT_DiscoveryTypes.generated.h"
 
+
 UENUM(BlueprintType)
 enum class ECTDiscoveryState : uint8
 {

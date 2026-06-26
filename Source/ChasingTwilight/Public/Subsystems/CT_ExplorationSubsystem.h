@@ -8,12 +8,10 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "CT_ExplorationSubsystem.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-	FOnDiscoveryAdded,
-	const FCTDiscoveryRecord&, Discovery
-);
-DECLARE_LOG_CATEGORY_EXTERN(LogCTExploration, Log, All);
 
+DECLARE_LOG_CATEGORY_EXTERN(LogCTExploration, Log, All);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDiscoveryAdded,
+	const FCTDiscoveryRecord&);
 
 UCLASS()
 class CHASINGTWILIGHT_API UCT_ExplorationSubsystem : public UGameInstanceSubsystem
@@ -31,11 +29,14 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CT|Exploration")
 	bool HasDiscovered(FName DiscoveryID) const;
 
-	UPROPERTY(BlueprintAssignable)
+	
 	FOnDiscoveryAdded OnDiscoveryAdded;
 
 	UFUNCTION(BlueprintPure, Category = "CT|Exploration")
 	TArray<FCTDiscoveryRecord> GetAllDiscoveries() const;
+
+
+	void LoadDiscoveries(const TArray<FCTDiscoveryRecord>& Records);
 
 	UFUNCTION(BlueprintPure, Category= "CT|Exploration")
 	FText GetDiscoveryDisplayName(FName DiscoveryID) const;
@@ -46,8 +47,8 @@ public:
 	UFUNCTION(BlueprintPure)
 	UCT_DiscoveryDefinition* GetDiscoveryDefinition(FName DiscoveryID) const;
 
-	UPROPERTY(EditDefaultsOnly, Category = "CT|Exploration")
-	TObjectPtr<UCT_DiscoveryDatabase> DiscoveryDatabase;
+
+	
 
 private:
 	UPROPERTY()
@@ -55,6 +56,8 @@ private:
 
 	FCTDiscoveryRecord BuildDiscoveryRecord(
 		const FCTDiscoveryRequest& Request) const;
+
+	TObjectPtr<UCT_DiscoveryDatabase> DiscoveryDatabase;
 
 	void ValidateDiscoveryDatabase() const;
 };

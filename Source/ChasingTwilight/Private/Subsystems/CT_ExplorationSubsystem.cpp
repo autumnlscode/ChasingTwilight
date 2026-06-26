@@ -72,6 +72,18 @@ TArray<FCTDiscoveryRecord> UCT_ExplorationSubsystem::GetAllDiscoveries() const
     return Result;
 }
 
+void UCT_ExplorationSubsystem::LoadDiscoveries(
+    const TArray<FCTDiscoveryRecord>& Records)
+{
+    Discoveries.Empty();
+
+    for (const FCTDiscoveryRecord& Record : Records)
+    {
+        Discoveries.Add(Record.DiscoveryID, Record);
+    }
+}
+
+
 FCTDiscoveryRecord UCT_ExplorationSubsystem::BuildDiscoveryRecord(
     const FCTDiscoveryRequest& Request) const
 {
@@ -179,3 +191,4 @@ UCT_ExplorationSubsystem::GetDiscoveryDefinition(FName DiscoveryID) const
 
     return DiscoveryDatabase->FindDefinition(DiscoveryID);
 }
+

@@ -2,6 +2,7 @@
 #include "Data/CT_SaveGame.h"
 #include "Subsystems/CT_TimeSubsystem.h"
 #include "Subsystems/CT_FlagSubsystem.h"
+#include "Subsystems/CT_ExplorationSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 
 void UCT_SaveSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -10,10 +11,11 @@ void UCT_SaveSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 	Collection.InitializeDependency(UCT_TimeSubsystem::StaticClass());
 	Collection.InitializeDependency(UCT_FlagSubsystem::StaticClass());
+	Collection.InitializeDependency(UCT_ExplorationSubsystem::StaticClass());
 
 	TimeSubsystem = GetGameInstance()->GetSubsystem<UCT_TimeSubsystem>();
 	FlagSubsystem = GetGameInstance()->GetSubsystem<UCT_FlagSubsystem>();
-	
+	ExplorationSubsystem = GetGameInstance()->GetSubsystem<UCT_ExplorationSubsystem>();
 
 	if (TimeSubsystem)
 	{
@@ -22,6 +24,10 @@ void UCT_SaveSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	if (FlagSubsystem)
 	{
 		FlagSubsystem->OnFlagChanged.AddDynamic(this, &UCT_SaveSubsystem::HandleFlagChanged);
+	}
+	if (ExplorationSubsystem)
+	{
+		ExplorationSubsystem->OnDiscoveryAdded.AddUObject(this, &UCT_SaveSubsystem::HandleDiscoveryAdded);
 	}
 	
 
@@ -73,6 +79,14 @@ void UCT_SaveSubsystem::HandleFlagChanged(FGameplayTag /*Flag*/, bool /*bIsSet*/
 	}
 }
 
+void UCT_SaveSubsystem::HandleDiscoveryAdded(const FCTDiscoveryRecord& Record)
+{
+	if (!bIsApplyingSave)
+	{
+		SetDirty(true);
+	}
+}
+
 UCT_SaveGame* UCT_SaveSubsystem::BuildSaveObject() const
 {
 	UCT_SaveGame* SaveObj = Cast<UCT_SaveGame>(UGameplayStatics::CreateSaveGameObject(UCT_SaveGame::StaticClass()));
@@ -93,6 +107,14 @@ UCT_SaveGame* UCT_SaveSubsystem::BuildSaveObject() const
 	{
 		SaveObj->ActiveFlags = FlagSubsystem->GetAllFlags();
 	}
+
+	//Exploration
+	if (ExplorationSubsystem)
+	{
+		SaveObj->Discoveries =
+			ExplorationSubsystem->GetAllDiscoveries();
+	}
+
 
 	// Cycle (v1: pick from flags if you like)
 	// If you're already using World.Cycle.* tags, this is a simple approach:
@@ -151,13 +173,20 @@ void UCT_SaveSubsystem::ApplySaveObject(const UCT_SaveGame* SaveObj) const
 		{
 			FlagSubsystem->SetFlag(SaveObj->CycleTag, true);
 		}
+
+	//Exploration
+		if (ExplorationSubsystem)
+		{
+			ExplorationSubsystem->LoadDiscoveries(
+				SaveObj->Discoveries);
+	}
 	}
 }
 
 void UCT_SaveSubsystem::ApplyLoadedPlayerState(APawn* Pawn)
 {
 	if (!Pawn || !LastLoadedSave) return;
-	if (LastLoadedSave->bHasPlayerTransform) return;
+	if (!LastLoadedSave->bHasPlayerTransform) return;
 	
 	Pawn->SetActorTransform(
 		LastLoadedSave->PlayerTransform, 
