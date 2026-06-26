@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "CT_DiscoveryTypes.h"
+#include "Exploration/CT_DiscoveryDefinition.h"
+#include "Exploration/CT_DiscoveryTypes.h"
 #include "CT_DiscoveryActor.generated.h"
 
 UCLASS()
@@ -17,7 +18,7 @@ public:
 	ACT_DiscoveryActor();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Discovery")
-	FName DiscoveryID;
+	TObjectPtr<UCT_DiscoveryDefinition> DiscoveryDefinition;
 
 	UFUNCTION(BlueprintCallable, Category="Discovery")
 	bool Discover();

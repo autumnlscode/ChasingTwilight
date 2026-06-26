@@ -33,10 +33,10 @@ bool ACT_DiscoveryActor::Discover()
 		return false;
 	}
 
-	if (DiscoveryID.IsNone())
+	if (!DiscoveryDefinition)
 	{
 		UE_LOG(LogTemp, Warning,
-			TEXT("%s has no DiscoveryID!"),
+			TEXT("%s has no DiscoveryDefinitiion assigned."),
 			*GetName());
 		return false;
 	}
@@ -50,10 +50,7 @@ bool ACT_DiscoveryActor::Discover()
 		return false;
 	}
 
-	UE_LOG(LogTemp, Log,
-		TEXT("%s requested discovery %s"),
-		*GetName(),
-		*DiscoveryID.ToString());
+
 	
 	return Exploration->Discover(CreateDiscoveryRequest());
 		
@@ -66,7 +63,7 @@ FCTDiscoveryRequest ACT_DiscoveryActor::CreateDiscoveryRequest() const
 {
 	FCTDiscoveryRequest Request;
 
-	Request.DiscoveryID = DiscoveryID;
+	Request.Definition = DiscoveryDefinition;
 	Request.WorldLocation = GetActorLocation();
 	Request.Method = ECTDiscoveryMethod::Interaction;
 

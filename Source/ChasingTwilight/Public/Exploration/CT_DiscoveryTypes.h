@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Class.h"
+#include "CT_DiscoveryDefinition.h"
 #include "Subsystems/CT_TimeSubsystem.h"
 #include "CT_DiscoveryTypes.generated.h"
 
@@ -57,8 +58,8 @@ struct FCTDiscoveryRequest
 
 public:
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FName DiscoveryID;
+    UPROPERTY()
+    TObjectPtr<UCT_DiscoveryDefinition> Definition;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FVector WorldLocation = FVector::ZeroVector;

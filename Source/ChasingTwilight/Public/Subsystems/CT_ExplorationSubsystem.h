@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Exploration/CT_DiscoveryTypes.h"
+#include "Exploration/CT_DiscoveryDatabase.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "CT_ExplorationSubsystem.generated.h"
 
@@ -11,6 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
 	FOnDiscoveryAdded,
 	const FCTDiscoveryRecord&, Discovery
 );
+DECLARE_LOG_CATEGORY_EXTERN(LogCTExploration, Log, All);
 
 
 UCLASS()
@@ -23,18 +25,29 @@ public:
 
 	virtual void Deinitialize() override;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "CT|Exploration")
 	bool Discover(const FCTDiscoveryRequest& Request);
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "CT|Exploration")
 	bool HasDiscovered(FName DiscoveryID) const;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnDiscoveryAdded OnDiscoveryAdded;
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "CT|Exploration")
 	TArray<FCTDiscoveryRecord> GetAllDiscoveries() const;
 
+	UFUNCTION(BlueprintPure, Category= "CT|Exploration")
+	FText GetDiscoveryDisplayName(FName DiscoveryID) const;
+
+	UFUNCTION(BlueprintPure, Category = "CT|Exploration")
+	bool IsValidDiscoveryID(FName DiscoveryID) const;
+
+	UFUNCTION(BlueprintPure)
+	UCT_DiscoveryDefinition* GetDiscoveryDefinition(FName DiscoveryID) const;
+
+	UPROPERTY(EditDefaultsOnly, Category = "CT|Exploration")
+	TObjectPtr<UCT_DiscoveryDatabase> DiscoveryDatabase;
 
 private:
 	UPROPERTY()
@@ -42,4 +55,6 @@ private:
 
 	FCTDiscoveryRecord BuildDiscoveryRecord(
 		const FCTDiscoveryRequest& Request) const;
+
+	void ValidateDiscoveryDatabase() const;
 };
