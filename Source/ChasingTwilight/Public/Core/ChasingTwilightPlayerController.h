@@ -49,4 +49,10 @@ protected:
 	/** Returns true if the player should use UMG touch controls */
 	bool ShouldUseTouchControls() const;
 
+	UPROPERTY(BlueprintReadOnly, Category="CT|Debug")
+	bool bDeveloperCursorEnabled = false;
+
+	UFUNCTION(BlueprintCallable, Category="CT|Debug")
+	void SetDeveloperCursorEnabled(bool bEnabled);
+
 };

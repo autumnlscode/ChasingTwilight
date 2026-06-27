@@ -65,3 +65,25 @@ bool AChasingTwilightPlayerController::ShouldUseTouchControls() const
 	// are we on a mobile platform? Should we force touch?
 	return SVirtualJoystick::ShouldDisplayTouchInterface() || bForceTouchControls;
 }
+
+
+void AChasingTwilightPlayerController::SetDeveloperCursorEnabled(bool bEnabled)
+{
+	bDeveloperCursorEnabled = bEnabled;
+
+	if (bEnabled)
+	{
+		FInputModeGameAndUI InputMode;
+		InputMode.SetHideCursorDuringCapture(false);
+		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+		SetIgnoreLookInput(true);
+		SetInputMode(InputMode);
+	}
+	else
+	{
+		FInputModeGameOnly InputMode;
+		SetIgnoreLookInput(false);
+		SetInputMode(InputMode);
+	}
+}
