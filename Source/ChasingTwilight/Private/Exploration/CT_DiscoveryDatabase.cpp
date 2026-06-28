@@ -38,3 +38,8 @@ UCT_DiscoveryDefinition* UCT_DiscoveryDatabase::FindDefinition(FName DiscoveryID
 
 	return nullptr;
 }
+
+int32 UCT_DiscoveryDatabase::GetDefinitionCount() const
+{
+	return Discoveries.Num();
+}

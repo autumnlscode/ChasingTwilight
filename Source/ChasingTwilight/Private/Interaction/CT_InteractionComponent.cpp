@@ -188,6 +188,7 @@ void UCT_InteractionComponent::UpdateFocus()
 {
 	if (bInteractionSuppressed)
 	{
+		ApplyFocus(nullptr);
 		return;
 	}
 

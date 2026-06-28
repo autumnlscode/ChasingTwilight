@@ -87,6 +87,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="CT|Input")
 	int32 GameplayMappingPriority = 0;
 
+	UFUNCTION(BlueprintCallable, Category = "CT|Debug")
+	void ToggleDeveloperCursor();
 
 	
 private:

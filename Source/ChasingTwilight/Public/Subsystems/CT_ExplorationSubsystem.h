@@ -47,8 +47,20 @@ public:
 	UFUNCTION(BlueprintPure)
 	UCT_DiscoveryDefinition* GetDiscoveryDefinition(FName DiscoveryID) const;
 
-
+	UFUNCTION(BlueprintPure, Category="CT|Exploration")
+	int32 GetDiscoveryCount() const;
 	
+	UFUNCTION(BlueprintPure, Category="CT|Exploration")
+	int32 GetDefinitionCount() const;
+
+	UFUNCTION(BlueprintPure)
+	FString GetDatabaseName() const;
+
+	UFUNCTION(BlueprintPure)
+	FText GetLastDiscoveryName() const;
+
+	UFUNCTION(BlueprintCallable)
+	void ClearAllDiscoveries();
 
 private:
 	UPROPERTY()
@@ -60,4 +72,6 @@ private:
 	TObjectPtr<UCT_DiscoveryDatabase> DiscoveryDatabase;
 
 	void ValidateDiscoveryDatabase() const;
+
+	FName LastDiscoveryID;
 };

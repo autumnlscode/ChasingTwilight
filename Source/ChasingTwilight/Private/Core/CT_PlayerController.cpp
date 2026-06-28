@@ -197,3 +197,8 @@ const FCTInputLayer* ACT_PlayerController::FindInputLayer(ECTInputLayer Layer) c
 
 	return nullptr;
 }
+
+void ACT_PlayerController::ToggleDeveloperCursor()
+{
+	SetDeveloperCursorEnabled(!bDeveloperCursorEnabled);
+}

@@ -57,6 +57,7 @@ bool UCT_ExplorationSubsystem::Discover(const FCTDiscoveryRequest& Request)
 
     Discoveries.Add(Request.Definition->DiscoveryID, Record);
     OnDiscoveryAdded.Broadcast(Record);
+    LastDiscoveryID = Request.Definition->DiscoveryID;
 
     UE_LOG(LogCTExploration, Log, TEXT("Discovered: %s"), *Request.Definition->DiscoveryID.ToString());
 
@@ -192,3 +193,37 @@ UCT_ExplorationSubsystem::GetDiscoveryDefinition(FName DiscoveryID) const
     return DiscoveryDatabase->FindDefinition(DiscoveryID);
 }
 
+int32 UCT_ExplorationSubsystem::GetDiscoveryCount() const
+{
+    return Discoveries.Num();
+}
+
+int32 UCT_ExplorationSubsystem::GetDefinitionCount() const
+{
+    return DiscoveryDatabase
+        ? DiscoveryDatabase->GetDefinitionCount()
+        : 0;
+}
+
+FString UCT_ExplorationSubsystem::GetDatabaseName() const
+{
+    return DiscoveryDatabase
+        ? DiscoveryDatabase->GetName()
+        : TEXT("None");
+}
+
+FText UCT_ExplorationSubsystem::GetLastDiscoveryName() const
+{
+    if (LastDiscoveryID.IsNone())
+    {
+        return FText::FromString(TEXT("None"));
+    }
+
+    return GetDiscoveryDisplayName(LastDiscoveryID);
+}
+
+void UCT_ExplorationSubsystem::ClearAllDiscoveries()
+{
+    Discoveries.Empty();
+    LastDiscoveryID = NAME_None;
+}

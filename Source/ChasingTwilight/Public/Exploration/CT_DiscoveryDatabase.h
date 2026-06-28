@@ -23,6 +23,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UCT_DiscoveryDefinition* FindDefinition(FName DiscoveryID) const;
 
-	
+	UFUNCTION(BlueprintPure)
+	int32 GetDefinitionCount() const;
 
 };
