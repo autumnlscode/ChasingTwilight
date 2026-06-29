@@ -100,6 +100,9 @@ void UCT_UISubsystem::HideWidget(FName WidgetID)
 	UE_LOG(LogCTUI, Display,
 		TEXT("Hiding Widget: %s"),
 		*WidgetID.ToString());
+
+	RefreshInputMode();
+
 }
 
 UUserWidget* UCT_UISubsystem::EnsureWidget(FName WidgetID)
@@ -150,6 +153,8 @@ UUserWidget* UCT_UISubsystem::ShowWidget(FName WidgetID)
 	{
 		Widget->SetVisibility(ESlateVisibility::Visible);
 	}
+
+	RefreshInputMode();
 
 	return Widget;
 }
@@ -208,5 +213,78 @@ void UCT_UISubsystem::ToggleWidget(FName WidgetID)
 	else
 	{
 		ShowWidget(WidgetID);
+	}
+}
+
+void UCT_UISubsystem::RefreshInputMode()
+{
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	APlayerController* PC = World->GetFirstPlayerController();
+	if (!PC)
+	{
+		return;
+	}
+
+	bool bWantsUIFocus = false;
+	UUserWidget* FocusWidget = nullptr;
+
+	for (const auto& Pair : ActiveWidget)
+	{
+		UUserWidget* Widget = Pair.Value.Get();
+
+		if (!Widget)
+		{
+			continue;
+		}
+
+		if (Widget->GetVisibility() != ESlateVisibility::Visible)
+		{
+			continue;
+		}
+
+		const FCTWidgetDefinition* Definition =
+			FindWidgetDefinition(Pair.Key);
+
+		if (!Definition)
+		{
+			continue;
+		}
+
+		if (Definition->bRequestsUIFocus)
+		{
+			bWantsUIFocus = true;
+			FocusWidget = Widget;
+			break;
+		}
+	}
+
+	if (bWantsUIFocus)
+	{
+		PC->bShowMouseCursor = true;
+
+		FInputModeGameAndUI Mode;
+		Mode.SetHideCursorDuringCapture(false);
+		Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+		if (FocusWidget)
+		{
+			Mode.SetWidgetToFocus(FocusWidget->TakeWidget());
+		}
+
+		PC->SetInputMode(Mode);
+		PC->SetIgnoreLookInput(true);
+	}
+	else
+	{
+		PC->bShowMouseCursor = false;
+
+		FInputModeGameOnly Mode;
+		PC->SetInputMode(Mode);
+		PC->SetIgnoreLookInput(false);
 	}
 }

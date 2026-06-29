@@ -31,4 +31,7 @@ struct FCTWidgetDefinition
 
 	UPROPERTY(EditAnywhere)
 	ECTUILayer Layer = ECTUILayer::HUD;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bRequestsUIFocus = false;
 };

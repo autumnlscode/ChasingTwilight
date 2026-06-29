@@ -44,7 +44,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CT|Exploration")
 	bool IsValidDiscoveryID(FName DiscoveryID) const;
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "CT|Exploration")
 	UCT_DiscoveryDefinition* GetDiscoveryDefinition(FName DiscoveryID) const;
 
 	UFUNCTION(BlueprintPure, Category="CT|Exploration")
@@ -53,14 +53,16 @@ public:
 	UFUNCTION(BlueprintPure, Category="CT|Exploration")
 	int32 GetDefinitionCount() const;
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "CT|Exploration")
 	FString GetDatabaseName() const;
 
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, Category = "CT|Exploration")
 	FText GetLastDiscoveryName() const;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "CT|Exploration")
 	void ClearAllDiscoveries();
+
+	
 
 private:
 	UPROPERTY()

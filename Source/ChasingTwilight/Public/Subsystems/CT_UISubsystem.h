@@ -59,9 +59,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ToggleWidget(FName WidgetID);
 
+
+
 private:
 
 	const FCTWidgetDefinition* FindWidgetDefinition(FName WidgetID) const;
 
 	void ValidateRegistry() const;
+
+	void RefreshInputMode();
 };

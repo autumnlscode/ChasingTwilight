@@ -56,6 +56,12 @@ bool UCT_ExplorationSubsystem::Discover(const FCTDiscoveryRequest& Request)
     FCTDiscoveryRecord Record = BuildDiscoveryRecord(Request);
 
     Discoveries.Add(Request.Definition->DiscoveryID, Record);
+    
+    UE_LOG(LogCTExploration,
+        Warning,
+        TEXT("Discover called. Map Count = %d"),
+        Discoveries.Num());
+
     OnDiscoveryAdded.Broadcast(Record);
     LastDiscoveryID = Request.Definition->DiscoveryID;
 
@@ -66,6 +72,11 @@ bool UCT_ExplorationSubsystem::Discover(const FCTDiscoveryRequest& Request)
 
 TArray<FCTDiscoveryRecord> UCT_ExplorationSubsystem::GetAllDiscoveries() const
 {
+    UE_LOG(LogCTExploration,
+        Warning,
+        TEXT("GetAllDiscoveries called. Map contains %d discoveries."),
+        Discoveries.Num());
+
     TArray<FCTDiscoveryRecord> Result;
 
     Discoveries.GenerateValueArray(Result);
