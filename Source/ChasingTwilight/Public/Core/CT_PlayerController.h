@@ -92,7 +92,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CT|Debug")
 	void ToggleDeveloperCursor();
 
+	UFUNCTION(BlueprintCallable, Category = "CT|Screen")
+	void FadeScreen(
+		bool bFadeToBlack,
+		float Duration = 1.0f,
+		bool bHoldWhenFinished = false);
 	
+
+	UFUNCTION(BlueprintCallable, Category = "CT|Debug")
+	void TestResolver();
+	
+
 private:
 
 	bool bDeveloperCursorEnabled = false;

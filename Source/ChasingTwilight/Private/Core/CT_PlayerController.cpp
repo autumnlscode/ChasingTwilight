@@ -2,6 +2,8 @@
 
 
 #include "Core/CT_PlayerController.h"
+#include "Subsystems/CT_InteractionSubsystem.h"
+#include "Interaction/CT_InteractableComponent.h"
 
 
 DEFINE_LOG_CATEGORY(LogCTInput);
@@ -201,4 +203,52 @@ const FCTInputLayer* ACT_PlayerController::FindInputLayer(ECTInputLayer Layer) c
 void ACT_PlayerController::ToggleDeveloperCursor()
 {
 	SetDeveloperCursorEnabled(!bDeveloperCursorEnabled);
+}
+
+void ACT_PlayerController::FadeScreen(bool bFadeToBlack,
+	float Duration,
+	bool bHoldWhenFinished)
+{
+	if (PlayerCameraManager)
+	{
+		PlayerCameraManager->StartCameraFade(
+			bFadeToBlack ? 0.f : 1.f,
+			bFadeToBlack ? 1.f : 0.f,
+			Duration,
+			FLinearColor::Black,
+			false,
+			bHoldWhenFinished
+		);
+	}
+}
+
+void ACT_PlayerController::TestResolver()
+{
+	UCT_InteractionSubsystem* InteractionSubsystem =
+		GetGameInstance()->GetSubsystem<UCT_InteractionSubsystem>();
+
+	if (!InteractionSubsystem)
+	{
+		return;
+	}
+
+	APawn* PlayerPawn = GetPawn();
+
+	if (!PlayerPawn)
+	{
+		return;
+	}
+
+	UCT_InteractableComponent* Result =
+		InteractionSubsystem->ResolveBestInteraction(PlayerPawn);
+
+	if (!Result)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Interaction"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning,
+		TEXT("Best Interaction: %s"),
+		*GetNameSafe(Result->GetOwner()));
 }

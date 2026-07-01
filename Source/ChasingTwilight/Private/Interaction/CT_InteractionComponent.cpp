@@ -101,10 +101,17 @@ bool UCT_InteractionComponent::TryInteract(AActor* InInteractor, UObject*& OutTa
 		return false;
 	}
 
-	OutTarget = TargetActor;
+	
 
 	// Phase 0.5: actually "do" the interact here (interface call, etc.)
 	// For now we just report success + return the refs.
+	ApplyFocus(nullptr);
+	SetInteractionSuppressed(true);
+
+	OutTarget = TargetActor;
+	OutInteractor = InInteractor;
+
+
 	return true;
 }
 
@@ -151,6 +158,8 @@ AActor* UCT_InteractionComponent::GetTraceHitActor(bool& bOutHit) const
 	{
 		Params.AddIgnoredActor(OwnerActor);
 	}
+
+
 
 	FHitResult Hit;
 	const bool bHit = World->SweepSingleByChannel(
@@ -226,7 +235,24 @@ void UCT_InteractionComponent::UpdateFocus()
 		AActor* A = W.Get();
 		if (!IsValid(A)) continue;
 
-		const FVector To = (A->GetActorLocation() - Start);
+		FVector BoundsOrigin;
+		FVector BoundsExtent;
+		A->GetActorBounds(true, BoundsOrigin, BoundsExtent);
+
+		if (bDebugDraw && DrawDebugType != EDrawDebugTrace::None)
+		{
+			DrawDebugSphere(
+				GetWorld(),
+				BoundsOrigin,
+				12.f,
+				12,
+				FColor::Blue,
+				false,
+				ScanInterval
+			);
+		}
+
+		const FVector To = BoundsOrigin - Start;
 		const float Dist = To.Size();
 		if (Dist > MaxInteractDistance) continue;
 

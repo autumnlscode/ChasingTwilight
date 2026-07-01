@@ -80,6 +80,10 @@
 			"Name": "AdvancedLoggingSystem",
 			"Enabled": true,
 			"MarketplaceURL": "https://fab.com/s/64efe02d3f99"
+		},
+		{
+			"Name": "OhSnap",
+			"Enabled": true
 		}
 	]
 }
