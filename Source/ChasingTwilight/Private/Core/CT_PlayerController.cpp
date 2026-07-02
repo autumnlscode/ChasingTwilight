@@ -19,6 +19,12 @@ void ACT_PlayerController::BeginPlay()
 
 	AddInputLayer(ECTInputLayer::Gameplay);
 	AddInputLayer(ECTInputLayer::Developer);
+
+	if (UCT_InteractionSubsystem* InteractionSubsystem =
+		GetGameInstance()->GetSubsystem<UCT_InteractionSubsystem>())
+	{
+		InteractionSubsystem->SetInteractionPawn(GetPawn());
+	}
 }
 
 void ACT_PlayerController::ApplyInputMode(ECTInputMode NewMode)
@@ -240,7 +246,7 @@ void ACT_PlayerController::TestResolver()
 	}
 
 	UCT_InteractableComponent* Result =
-		InteractionSubsystem->ResolveBestInteraction(PlayerPawn);
+		InteractionSubsystem->FindBestInteractable(PlayerPawn);
 
 	if (!Result)
 	{

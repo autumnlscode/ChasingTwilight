@@ -21,4 +21,7 @@ public:
 	TArray<FCTWidgetDefinition> Widgets;
 
 	const FCTWidgetDefinition* FindWidget(FName WidgetID) const;
+
+
+
 };

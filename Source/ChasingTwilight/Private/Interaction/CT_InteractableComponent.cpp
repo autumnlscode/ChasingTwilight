@@ -3,6 +3,7 @@
 
 #include "Interaction/CT_InteractableComponent.h"
 #include "Subsystems/CT_InteractionSubsystem.h"
+#include "Interaction/CT_InteractableInterface.h"
 #include "Interaction/CT_InteractionRegistry.h"
 #include "Engine/GameInstance.h"
 
@@ -80,3 +81,25 @@ void UCT_InteractableComponent::SetInteractionEnabled(bool bEnabled)
 {
 	bInteractionEnabled = bEnabled;
 }
+
+
+
+TArray<FCT_InteractionOption> UCT_InteractableComponent::GetInteractionOptions(APawn* Interactor) const
+{
+	return {};
+}
+
+void UCT_InteractableComponent::ExecuteInteraction(APawn* Interactor)
+{
+	AActor* OwnerActor = GetOwner();
+
+	if (!OwnerActor)
+	{
+		return;
+	}
+
+	ICT_InteractableInterface::Execute_ExecuteInteraction(
+		OwnerActor,
+		Interactor);
+}
+

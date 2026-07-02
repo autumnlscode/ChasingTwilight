@@ -4,6 +4,7 @@
 #include "Subsystems/CT_UISubsystem.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/CT_UITypes.h"
+#include "Subsystems/CT_InteractionSubsystem.h"
 #include "Core/CT_GameInstance.h"
 
 DEFINE_LOG_CATEGORY(LogCTUI);
@@ -37,12 +38,9 @@ void UCT_UISubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	{
 		UIRegistry = CTGameInstance->GetUIRegistry();
 		
-		UE_LOG(LogCTUI,
-			Display,
-			TEXT("UI Registry: %s"),
-			UIRegistry
-			? *UIRegistry->GetName()
-			: TEXT("NULL"));
+		UE_LOG(LogCTUI, Warning,
+			TEXT("Registry Path: %s"),
+			*UIRegistry->GetPathName());
 	}
 
 		
@@ -72,7 +70,7 @@ const FCTWidgetDefinition* UCT_UISubsystem::FindWidgetDefinition(FName WidgetID)
 
 UUserWidget* UCT_UISubsystem::GetWidget(FName WidgetID) const
 {
-	if (const TObjectPtr<UUserWidget>* Widget = ActiveWidget.Find(WidgetID))
+	if (const TObjectPtr<UUserWidget>* Widget = ActiveWidgets.Find(WidgetID))
 	{
 		return Widget->Get();
 	}
@@ -97,9 +95,17 @@ void UCT_UISubsystem::HideWidget(FName WidgetID)
 		Widget->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
-	UE_LOG(LogCTUI, Display,
-		TEXT("Hiding Widget: %s"),
-		*WidgetID.ToString());
+	const FCTWidgetDefinition* Definition =
+		FindWidgetDefinition(WidgetID);
+
+	if (Definition->bSuppressInteraction)
+	{
+		if (UCT_InteractionSubsystem* InteractionSubsystem =
+			GetGameInstance()->GetSubsystem<UCT_InteractionSubsystem>())
+		{
+			InteractionSubsystem->SetInteractionSuppressed(false);
+		}
+	}
 
 	RefreshInputMode();
 
@@ -138,7 +144,7 @@ UUserWidget* UCT_UISubsystem::EnsureWidget(FName WidgetID)
 	Widget->AddToViewport(
 		LayerToZOrder(Definition->Layer));
 
-	ActiveWidget.Add(
+	ActiveWidgets.Add(
 		WidgetID,
 		Widget);
 
@@ -152,6 +158,18 @@ UUserWidget* UCT_UISubsystem::ShowWidget(FName WidgetID)
 	if (Widget)
 	{
 		Widget->SetVisibility(ESlateVisibility::Visible);
+
+		if (const FCTWidgetDefinition* Definition = FindWidgetDefinition(WidgetID))
+		{
+			if (Definition->bSuppressInteraction)
+			{
+				if (UCT_InteractionSubsystem* InteractionSubsystem =
+					GetGameInstance()->GetSubsystem<UCT_InteractionSubsystem>())
+				{
+					InteractionSubsystem->SetInteractionSuppressed(true);
+				}
+			}
+		}
 	}
 
 	RefreshInputMode();
@@ -233,7 +251,7 @@ void UCT_UISubsystem::RefreshInputMode()
 	bool bWantsUIFocus = false;
 	UUserWidget* FocusWidget = nullptr;
 
-	for (const auto& Pair : ActiveWidget)
+	for (const auto& Pair : ActiveWidgets)
 	{
 		UUserWidget* Widget = Pair.Value.Get();
 
@@ -255,13 +273,29 @@ void UCT_UISubsystem::RefreshInputMode()
 			continue;
 		}
 
+		UE_LOG(LogCTUI, Warning,
+			TEXT("Widget %s Focus=%d Suppress=%d"),
+			*Pair.Key.ToString(),
+			Definition->bRequestsUIFocus,
+			Definition->bSuppressInteraction);
+
 		if (Definition->bRequestsUIFocus)
 		{
 			bWantsUIFocus = true;
 			FocusWidget = Widget;
 			break;
 		}
+
+		UE_LOG(LogCTUI, Warning,
+			TEXT("%s Visible=%d RequestsFocus=%d"),
+			*Pair.Key.ToString(),
+			Widget->GetVisibility() == ESlateVisibility::Visible,
+			Definition->bRequestsUIFocus);
 	}
+
+	UE_LOG(LogCTUI, Warning,
+		TEXT("RefreshInputMode WantsUIFocus=%d"),
+		bWantsUIFocus);
 
 	if (bWantsUIFocus)
 	{
@@ -277,6 +311,7 @@ void UCT_UISubsystem::RefreshInputMode()
 		}
 
 		PC->SetInputMode(Mode);
+		FocusWidget->SetFocus();
 		PC->SetIgnoreLookInput(true);
 	}
 	else

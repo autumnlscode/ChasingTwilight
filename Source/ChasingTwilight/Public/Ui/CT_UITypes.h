@@ -34,4 +34,8 @@ struct FCTWidgetDefinition
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bRequestsUIFocus = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Behavior")
+	bool bSuppressInteraction = false;
+	// TODO: Replace with suppression stack/reference count
 };

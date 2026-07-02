@@ -39,7 +39,7 @@ public:
 	}
 
 	UPROPERTY()
-	TMap<FName, TObjectPtr<UUserWidget>> ActiveWidget;
+	TMap<FName, TObjectPtr<UUserWidget>> ActiveWidgets;
 
 	UFUNCTION(BlueprintCallable, Category = "CT|UI")
 	UUserWidget* EnsureWidget(FName WidgetID);

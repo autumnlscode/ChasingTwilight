@@ -4,7 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "CT_InteractionOptions.h"
 #include "CT_InteractableComponent.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FOnInteracted,
+	APawn*,
+	Interactor);
 
 
 UCLASS( ClassGroup=(CT), meta=(BlueprintSpawnableComponent) )
@@ -43,11 +49,25 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CT|Interaction")
 	void SetInteractionEnabled(bool bEnabled);
 
+	
+
+	UPROPERTY(BlueprintAssignable)
+	FOnInteracted OnInteracted;
+
+	UFUNCTION(BlueprintCallable, Category = "CT|Interaction")
+	TArray<FCT_InteractionOption> GetInteractionOptions(APawn* Interactor) const;
+
+	UFUNCTION(BlueprintCallable, Category = "CT|Interaction")
+	void ExecuteInteraction(APawn* Interactor);
+
+	
+
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CT|Interaction")
 	bool bInteractionEnabled = true;
 
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CT|Interaction")
 	FText InteractionName;
 
@@ -59,4 +79,7 @@ protected:
 		
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName InteractionID;
+
+
+
 };
