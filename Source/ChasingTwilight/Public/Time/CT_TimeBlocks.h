@@ -1,10 +1,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CT_TimeBlockTypes.generated.h"
+#include "CT_TimeBlocks.generated.h"
 
 UENUM(BlueprintType)
-enum class ECT_TimeBlockTypes : uint8
+enum class ECT_TimeBlocks : uint8
 {
     None = 0	    UMETA(DisplayName = "None"),
     DarkestHour = 1 UMETA(DisplayName = "Darkest Hour"),

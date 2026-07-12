@@ -3,6 +3,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "GameplayTagContainer.h"
 #include "Time/CT_NPCScheduleTypes.h"
+#include "Time/CT_TimeBlocks.h"
 #include "CT_NPCScheduleSubsystem.generated.h"
 
 class UCT_TimeSubsystem;
@@ -16,7 +17,7 @@ struct FCT_NPCScheduleResolvedState
 	FName NPCId = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECT_TimeBlock CurrentBlock = ECT_TimeBlock::Morning;
+	ECT_TimeBlocks CurrentBlock = ECT_TimeBlocks::Morning;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTag LocationTag;
@@ -52,9 +53,9 @@ public:
 	FCT_OnNPCScheduleApplied OnScheduleApplied;
 
 private:
-	void HandleTimeUpdated(int32 NewDay, int32 NewMinutes, ECT_TimeBlock NewBlock);
-	void ApplyAll(ECT_TimeBlock Block);
-	bool ResolveForBlock(const FCT_NPCSchedule& S, ECT_TimeBlock Block, FCT_NPCScheduleResolvedState& OutState) const;
+	void HandleTimeUpdated(int32 NewDay, int32 NewMinutes, ECT_TimeBlocks NewBlock);
+	void ApplyAll(ECT_TimeBlocks Block);
+	bool ResolveForBlock(const FCT_NPCSchedule& S, ECT_TimeBlocks Block, FCT_NPCScheduleResolvedState& OutState) const;
 
 private:
 	UPROPERTY()

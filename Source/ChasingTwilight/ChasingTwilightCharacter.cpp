@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Subsystems/CT_TimeSubsystem.h"
 #include "ChasingTwilight.h"
 
 AChasingTwilightCharacter::AChasingTwilightCharacter()
@@ -46,6 +47,8 @@ AChasingTwilightCharacter::AChasingTwilightCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
+
+	PrimaryActorTick.bCanEverTick = true;
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -131,3 +134,53 @@ void AChasingTwilightCharacter::DoJumpEnd()
 	// signal the character to stop jumping
 	StopJumping();
 }
+
+void AChasingTwilightCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	LastLocation = GetActorLocation();
+}
+
+void AChasingTwilightCharacter::Tick(float DeltaTime)
+{
+
+	Super::Tick(DeltaTime);
+
+
+	UE_LOG(LogTemp, Warning, TEXT("Tick"));
+
+	UCT_TimeSubsystem* TimeSubsystem =
+		GetGameInstance()->GetSubsystem<UCT_TimeSubsystem>();
+
+	if (!TimeSubsystem)
+	{
+		return;
+	}
+
+	const FVector CurrentLocation = GetActorLocation();
+
+	if (GetVelocity().IsNearlyZero())
+	{
+		LastLocation = GetActorLocation();
+		return;
+	}
+
+	FVector Current2D = CurrentLocation;
+	Current2D.Z = 0.f;
+
+	FVector Last2D = LastLocation;
+	Last2D.Z = 0.f;
+
+	const float DistanceCM =
+		FVector::Distance(Current2D, Last2D);
+
+	LastLocation = CurrentLocation;
+
+	TimeSubsystem->AddTravelDistance(DistanceCM / 100.f);
+
+	UE_LOG(LogTemp, Warning,
+		TEXT("Distance This Frame: %.2f m"),
+		DistanceCM / 100.f);
+}
+

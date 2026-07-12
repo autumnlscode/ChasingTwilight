@@ -72,7 +72,12 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
+	
 public:
+
+	void BeginPlay();
+
+	void Tick(float DeltaTime) override;
 
 	/** Handles move inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
@@ -92,6 +97,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "CT|Interaction")
 	UCT_InteractionComponent* GetInteractionComponent() const { return InteractionComponent; }
+
+	UPROPERTY()
+	FVector LastLocation;
 
 
 public:

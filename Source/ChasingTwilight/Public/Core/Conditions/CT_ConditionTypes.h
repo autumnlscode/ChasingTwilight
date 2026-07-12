@@ -6,7 +6,7 @@
 
 // Forward declare instead of including TimeSubsystem here.
 // We only need the enum type name to compile the struct layout.
-enum class ECT_TimeBlock : uint8;
+enum class ECT_TimeBlocks : uint8;
 
 UENUM(BlueprintType)
 enum class ECT_ConditionGroupLogic : uint8
@@ -55,7 +55,7 @@ struct FCT_Condition
 	FGameplayTag Tag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CT|Condition")
-	ECT_TimeBlock TimeBlockValue;
+	ECT_TimeBlocks TimeBlockValue;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CT|Condition")
 	int32 IntValue = 0;

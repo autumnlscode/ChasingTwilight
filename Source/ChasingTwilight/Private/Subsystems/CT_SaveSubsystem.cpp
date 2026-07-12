@@ -19,7 +19,7 @@ void UCT_SaveSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 	if (TimeSubsystem)
 	{
-		TimeSubsystem->OnTimeUpdated.AddUObject(this, &UCT_SaveSubsystem::HandleTimeUpdated);
+		TimeSubsystem->OnTimeUpdatedNative.AddUObject(this, &UCT_SaveSubsystem::HandleTimeUpdated);
 	}
 	if (FlagSubsystem)
 	{
@@ -62,7 +62,7 @@ void UCT_SaveSubsystem::SetDirty(bool bNewDirty)
 	OnSaveDirtyChanged.Broadcast(bDirty);
 }
 
-void UCT_SaveSubsystem::HandleTimeUpdated(int32 /*NewDay*/, int32 /*NewMinutes*/, ECT_TimeBlock /*NewBlock*/)
+void UCT_SaveSubsystem::HandleTimeUpdated(int32 /*NewDay*/, int32 /*NewMinutes*/, ECT_TimeBlocks /*NewBlock*/)
 {
 	// v1: any time update marks dirty (you can narrow to block/day changes later)
 	if (!bIsApplyingSave)

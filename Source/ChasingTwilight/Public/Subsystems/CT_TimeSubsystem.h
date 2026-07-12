@@ -1,38 +1,35 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Time/CT_TimeTypes.h"
+#include "Time/CT_TimeBlocks.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "CT_TimeSubsystem.generated.h"
 
-// --- Enums kept here for simplicity ---
-UENUM(BlueprintType)
-enum class ECT_Season : uint8
+
+// Native C++
+DECLARE_MULTICAST_DELEGATE_ThreeParams(
+    FCT_OnTimeUpdatedNative,
+    int32,
+    int32,
+    ECT_TimeBlocks);
+
+// Blueprint
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(
+    FCT_OnTimeUpdated,
+    int32, Day,
+    int32, Minutes,
+    ECT_TimeBlocks, TimeBlock);
+
+//Region Profiles
+USTRUCT(BlueprintType)
+struct FCTTimeRegionSettings
 {
-	None = 0       UMETA(DisplayName = "None"),
-    Springtide = 1 UMETA(DisplayName = "Springtide"),
-    Suncrest = 2   UMETA(DisplayName = "Suncrest"),
-    Amberfall = 3  UMETA(DisplayName = "Amberfall"),
-    Frostwane = 4  UMETA(DisplayName = "Frostwane"),
+    GENERATED_BODY();
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float MetersPerMinute = 25.f;
 };
-
-UENUM(BlueprintType)
-enum class ECT_TimeBlock : uint8
-{
-	None = 0	    UMETA(DisplayName = "None"),
-    DarkestHour = 1 UMETA(DisplayName = "Darkest Hour"),
-    Dawn = 2        UMETA(DisplayName = "Dawn"),
-    Morning = 3     UMETA(DisplayName = "Morning"),
-    Midday = 4      UMETA(DisplayName = "Midday"),
-    Afternoon = 5   UMETA(DisplayName = "Afternoon"),
-    Dusk = 6        UMETA(DisplayName = "Dusk"),
-    Evening = 7     UMETA(DisplayName = "Evening"),
-    Night = 8       UMETA(DisplayName = "Night"),
-    
-};
-
-// Native delegate (fast, C++ only). Great for scheduler.
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FCT_OnTimeUpdated, int32 /*Day*/, int32 /*Minutes*/, ECT_TimeBlock /*Block*/);
-
 
 UCLASS()
 class CHASINGTWILIGHT_API UCT_TimeSubsystem : public UGameInstanceSubsystem
@@ -67,17 +64,75 @@ public:
     ECT_Season GetSeason() const { return Season; }
 
     UFUNCTION(BlueprintPure, Category = "CT|Time")
-    ECT_TimeBlock GetTimeBlock() const { return CachedTimeBlock; }
+    ECT_TimeBlocks GetTimeBlock() const { return CachedTimeBlock; }
 
     // Scheduler subscribes to this
+    UPROPERTY(BlueprintAssignable, Category = "CT|Time")
     FCT_OnTimeUpdated OnTimeUpdated;
 
+    FCT_OnTimeUpdatedNative OnTimeUpdatedNative;
+
+    /* Eventual Broadcast events
+    
+    UPROPERTY(BlueprintAssignable)
+    FCT_OnMinuteChanged OnMinuteChanged;
+
+    UPROPERTY(BlueprintAssignable)
+    FCT_OnTimeBlockChanged OnTimeBlockChanged;
+
+    UPROPERTY(BlueprintAssignable)
+    FCT_OnDayChanged OnDayChanged;
+
+    UPROPERTY(BlueprintAssignable)
+    FCT_OnSeasonChanged OnSeasonChanged;*/
+
+
+
+    UFUNCTION(BlueprintPure, Category = "CT|Time")
+    FCTCurrentDateTime GetCurrentDatetime() const;
+
+    // Clock Control
+    UFUNCTION(BlueprintCallable, Category = "CT|Time")
+    void StartClock();
+
+    UFUNCTION(BlueprintCallable, Category = "CT|Time")
+    void StopClock();
+
+    UFUNCTION(BlueprintCallable, Category = "CT|Time")
+    void PauseClock(bool bPause);
+
+    UFUNCTION(BlueprintPure, Category = "CT|Time")
+    bool IsClockRunning() const;
+
+    // Time Scale
+    UFUNCTION(BlueprintCallable, Category = "CT|Time")
+    void SetSecondsPerGameMinute(float NewSeconds);
+
+    UFUNCTION(BlueprintPure, Category = "CT|Time")
+    float GetSecondsPerGameMinute() const;
+
+    //Ambient Time
+    UPROPERTY(EditAnywhere, Category = "CT|Time")
+    float MetersPerMinute = 1.f;
+
+    float DistanceAccumulator = 0.f;
+    
+    UFUNCTION(BlueprintCallable)
+    void AddTravelDistance(float DistanceMeters);
+   
+   //Intentional Time
+    UFUNCTION(BlueprintCallable)
+    void SpendTime(int32 Minutes);
+
+    //Commited Time
+    UFUNCTION(BlueprintCallable)
+    void AdvanceToTimeBlock(ECT_TimeBlocks NewBlock);
 
 private:
     void NormalizeTime();
 
     // If you already have a different time-block function name, use that instead
-    ECT_TimeBlock CalculateTimeBlock() const;
+    ECT_TimeBlocks CalculateTimeBlock() const;
 
 private:
     UPROPERTY()
@@ -89,7 +144,15 @@ private:
     UPROPERTY()
     ECT_Season Season = ECT_Season::Springtide;
 
+    bool bClockRunning = true;
+
+    bool bClockPaused = false;
+
+    float SecondsPerGameMinute = 2.0f;
+
+    float AccumulatedSeconds = 0.0f;
+
     // Cached so we can detect transitions
     UPROPERTY()
-    ECT_TimeBlock CachedTimeBlock = ECT_TimeBlock::Morning;
+    ECT_TimeBlocks CachedTimeBlock = ECT_TimeBlocks::Morning;
 };

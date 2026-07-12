@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "CT_TimeBlocks.h"
 #include "Subsystems/CT_TimeSubsystem.h"
 #include "CT_NPCScheduleTypes.generated.h"
 
@@ -10,7 +11,7 @@ struct FCT_NPCScheduleEntry
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECT_TimeBlock TimeBlock = ECT_TimeBlock::Morning;
+	ECT_TimeBlocks TimeBlock = ECT_TimeBlocks::Morning;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTag LocationTag;     // e.g. CT.Location.Town.Tavern

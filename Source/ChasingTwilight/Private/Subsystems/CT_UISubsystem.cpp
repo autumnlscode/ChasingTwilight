@@ -95,10 +95,28 @@ void UCT_UISubsystem::HideWidget(FName WidgetID)
 		Widget->SetVisibility(ESlateVisibility::Collapsed);
 	}
 
+
+	UE_LOG(LogCTUI, Warning,
+		TEXT("HideWidget called for '%s'"),
+		*WidgetID.ToString());
+
+
+
 	const FCTWidgetDefinition* Definition =
 		FindWidgetDefinition(WidgetID);
 
-	if (Definition->bSuppressInteraction)
+
+	if (!Definition)
+	{
+		UE_LOG(LogCTUI, Error,
+			TEXT("HideWidget: '%s' is not in the UI Registry."),
+			*WidgetID.ToString());
+
+		RefreshInputMode();
+		return;
+	}
+
+	if (Definition && Definition->bSuppressInteraction)
 	{
 		if (UCT_InteractionSubsystem* InteractionSubsystem =
 			GetGameInstance()->GetSubsystem<UCT_InteractionSubsystem>())
@@ -108,7 +126,6 @@ void UCT_UISubsystem::HideWidget(FName WidgetID)
 	}
 
 	RefreshInputMode();
-
 }
 
 UUserWidget* UCT_UISubsystem::EnsureWidget(FName WidgetID)
@@ -155,9 +172,17 @@ UUserWidget* UCT_UISubsystem::ShowWidget(FName WidgetID)
 {
 	UUserWidget* Widget = EnsureWidget(WidgetID);
 
+	UE_LOG(LogCTUI, Warning,
+		TEXT("Widget = %s"),
+		*GetNameSafe(Widget));
+
 	if (Widget)
 	{
 		Widget->SetVisibility(ESlateVisibility::Visible);
+
+		UE_LOG(LogCTUI, Warning,
+			TEXT("Visibility = %d"),
+			(int32)Widget->GetVisibility())
 
 		if (const FCTWidgetDefinition* Definition = FindWidgetDefinition(WidgetID))
 		{
@@ -173,6 +198,10 @@ UUserWidget* UCT_UISubsystem::ShowWidget(FName WidgetID)
 	}
 
 	RefreshInputMode();
+
+	UE_LOG(LogCTUI, Warning,
+		TEXT("ShowWidget(%s)"),
+		*WidgetID.ToString());
 
 	return Widget;
 }
@@ -203,6 +232,10 @@ void UCT_UISubsystem::ValidateRegistry() const
 			continue;
 		}
 
+		UE_LOG(LogCTUI, Warning,
+			TEXT("Registry contains WidgetID: '%s'"),
+			*Widget.WidgetID.ToString());
+
 		if (IDs.Contains(Widget.WidgetID))
 		{
 			UE_LOG(LogCTUI, Error,
@@ -216,7 +249,7 @@ void UCT_UISubsystem::ValidateRegistry() const
 		if (!Widget.WidgetClass)
 		{
 			UE_LOG(LogCTUI, Error,
-				TEXT("&s has no WidgetClass assigned."),
+				TEXT("%s has no WidgetClass assigned."),
 				*Widget.WidgetID.ToString());
 		}
 	}

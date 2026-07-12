@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "Subsystems/CT_TimeSubsystem.h" // for ECT_TimeBlock
+#include "Time/CT_TimeBlocks.h" // for ECT_TimeBlock
 #include "CT_SchedulerTypes.generated.h"
 
 UENUM(BlueprintType)
@@ -28,7 +28,7 @@ struct FCT_ScheduledEvent
 	ECT_ScheduleRule Rule = ECT_ScheduleRule::OnTimeBlockEnter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CT|Schedule")
-	ECT_TimeBlock TimeBlock = ECT_TimeBlock::Morning;
+	ECT_TimeBlocks TimeBlock = ECT_TimeBlocks::Morning;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CT|Schedule")
 	int32 TargetDay = 1;

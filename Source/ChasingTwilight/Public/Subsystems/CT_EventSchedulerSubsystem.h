@@ -60,8 +60,8 @@ public:
 
 
 private:
-	void HandleTimeUpdated(int32 NewDay, int32 NewMinutes, ECT_TimeBlock NewBlock);
-	void EvaluateAndFire(int32 Day, ECT_TimeBlock Block); 
+	void HandleTimeUpdated(int32 NewDay, int32 NewMinutes, ECT_TimeBlocks NewBlock);
+	void EvaluateAndFire(int32 Day, ECT_TimeBlocks Block); 
 	
 
 
@@ -79,5 +79,5 @@ private:
 	TObjectPtr<UCT_FlagSubsystem> FlagSubsystem;
 
 	int32 CachedDay = 1;
-	ECT_TimeBlock CachedBlock = ECT_TimeBlock::Morning;
+	ECT_TimeBlocks CachedBlock = ECT_TimeBlocks::Morning;
 };

@@ -8,6 +8,7 @@
 #include "Subsystems/CT_FlagSubsystem.h"
 #include "Subsystems/CT_TimeSubsystem.h"
 #include "Subsystems/CT_GameFlowSubsystem.h"
+#include "Time/CT_TimeBlocks.h"
 
 #include "Core/Conditions/CT_ConditionTypes.h"
 #include "CT_SubsystemManagerSubsystem.generated.h"
@@ -27,7 +28,7 @@ struct FCT_WorldStateSnapshot
 	UPROPERTY(BlueprintReadOnly) int32 TimeMinutes = 0;
 
 	UPROPERTY(BlueprintReadOnly) ECT_Season Season = ECT_Season::Springtide;
-	UPROPERTY(BlueprintReadOnly) ECT_TimeBlock TimeBlock = ECT_TimeBlock::Morning;
+	UPROPERTY(BlueprintReadOnly) ECT_TimeBlocks TimeBlock = ECT_TimeBlocks::Morning;
 	UPROPERTY(BlueprintReadOnly) ECT_GameFlowState FlowState = ECT_GameFlowState::FrontEnd;
 
 	UPROPERTY(BlueprintReadOnly) bool bSaveDirty = false;

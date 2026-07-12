@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/Class.h"
 #include "CT_DiscoveryDefinition.h"
+#include "Time/CT_TimeBlocks.h"
 #include "Subsystems/CT_TimeSubsystem.h"
 #include "CT_DiscoveryTypes.generated.h"
 
@@ -34,7 +35,7 @@ public:
     int32 DayDiscovered = 0;
 
     UPROPERTY(BlueprintReadOnly)
-    ECT_TimeBlock TimeBlock;
+    ECT_TimeBlocks TimeBlock;
 
     UPROPERTY(BlueprintReadOnly)
     FVector WorldLocation = FVector::ZeroVector;

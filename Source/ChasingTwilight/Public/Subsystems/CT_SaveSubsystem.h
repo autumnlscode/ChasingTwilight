@@ -72,7 +72,7 @@ private:
 	void ApplySaveObject(const UCT_SaveGame* SaveObj) const;
 
 	void ApplyLoadedPlayerState(APawn* Pawn);
-	void HandleTimeUpdated(int32 NewDay, int32 NewMinutes, ECT_TimeBlock NewBlock);
+	void HandleTimeUpdated(int32 NewDay, int32 NewMinutes, ECT_TimeBlocks NewBlock);
 	void HandleFlagChanged(FGameplayTag Flag, bool bIsSet);
 	void HandleDiscoveryAdded(const FCTDiscoveryRecord& Record);
 

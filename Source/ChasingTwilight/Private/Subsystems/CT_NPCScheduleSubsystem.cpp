@@ -9,7 +9,7 @@ void UCT_NPCScheduleSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	TimeSubsystem = GetGameInstance()->GetSubsystem<UCT_TimeSubsystem>();
 	if (TimeSubsystem)
 	{
-		TimeSubsystem->OnTimeUpdated.AddUObject(this, &UCT_NPCScheduleSubsystem::HandleTimeUpdated);
+		TimeSubsystem->OnTimeUpdatedNative.AddUObject(this, &UCT_NPCScheduleSubsystem::HandleTimeUpdated);
 
 		// Apply once at start so debug overlay isn't empty
 		ApplyAll(TimeSubsystem->GetTimeBlock());
@@ -33,12 +33,12 @@ void UCT_NPCScheduleSubsystem::RegisterSchedule(const FCT_NPCSchedule& Schedule)
 		if (S.NPCId == Schedule.NPCId)
 		{
 			S = Schedule;
-			ApplyAll(TimeSubsystem ? TimeSubsystem->GetTimeBlock() : ECT_TimeBlock::Morning);
+			ApplyAll(TimeSubsystem ? TimeSubsystem->GetTimeBlock() : ECT_TimeBlocks::Morning);
 			return;
 		}
 	}
 	Schedules.Add(Schedule);
-	ApplyAll(TimeSubsystem ? TimeSubsystem->GetTimeBlock() : ECT_TimeBlock::Morning);
+	ApplyAll(TimeSubsystem ? TimeSubsystem->GetTimeBlock() : ECT_TimeBlocks::Morning);
 }
 
 bool UCT_NPCScheduleSubsystem::UnregisterSchedule(FName NPCId)
@@ -59,12 +59,12 @@ TArray<FCT_NPCScheduleResolvedState> UCT_NPCScheduleSubsystem::GetAllResolvedSta
 	return ResolvedStates;
 }
 
-void UCT_NPCScheduleSubsystem::HandleTimeUpdated(int32 /*NewDay*/, int32 /*NewMinutes*/, ECT_TimeBlock NewBlock)
+void UCT_NPCScheduleSubsystem::HandleTimeUpdated(int32 /*NewDay*/, int32 /*NewMinutes*/, ECT_TimeBlocks NewBlock)
 {
 	ApplyAll(NewBlock);
 }
 
-void UCT_NPCScheduleSubsystem::ApplyAll(ECT_TimeBlock Block)
+void UCT_NPCScheduleSubsystem::ApplyAll(ECT_TimeBlocks Block)
 {
 	ResolvedStates.Reset();
 	ResolvedStates.Reserve(Schedules.Num());
@@ -80,7 +80,7 @@ void UCT_NPCScheduleSubsystem::ApplyAll(ECT_TimeBlock Block)
 	}
 }
 
-bool UCT_NPCScheduleSubsystem::ResolveForBlock(const FCT_NPCSchedule& S, ECT_TimeBlock Block, FCT_NPCScheduleResolvedState& OutState) const
+bool UCT_NPCScheduleSubsystem::ResolveForBlock(const FCT_NPCSchedule& S, ECT_TimeBlocks Block, FCT_NPCScheduleResolvedState& OutState) const
 {
 	OutState.NPCId = S.NPCId;
 	OutState.CurrentBlock = Block;

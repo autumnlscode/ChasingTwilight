@@ -24,7 +24,7 @@ void UCT_EventSchedulerSubsystem::Initialize(FSubsystemCollectionBase& Collectio
 		CachedDay = TimeSubsystem->GetDayNumber();
 		CachedBlock = TimeSubsystem->GetTimeBlock();
 
-		TimeSubsystem->OnTimeUpdated.AddUObject(this, &UCT_EventSchedulerSubsystem::HandleTimeUpdated);
+		TimeSubsystem->OnTimeUpdatedNative.AddUObject(this, &UCT_EventSchedulerSubsystem::HandleTimeUpdated);
 	}
 	else
 	{
@@ -84,18 +84,18 @@ static FString CT_RuleToString(ECT_ScheduleRule Rule)
 	}
 }
 
-static FString CT_BlockToString(ECT_TimeBlock Block)
+static FString CT_BlockToString(ECT_TimeBlocks Block)
 {
 	switch (Block)
 	{
-	case ECT_TimeBlock::Dawn:        return TEXT("Dawn");
-	case ECT_TimeBlock::Morning:     return TEXT("Morning");
-	case ECT_TimeBlock::Midday:      return TEXT("Midday");
-	case ECT_TimeBlock::Afternoon:   return TEXT("Afternoon");
-	case ECT_TimeBlock::Dusk:        return TEXT("Dusk");
-	case ECT_TimeBlock::Evening:     return TEXT("Evening");
-	case ECT_TimeBlock::Night:       return TEXT("Night");
-	case ECT_TimeBlock::DarkestHour: return TEXT("DarkestHour");
+	case ECT_TimeBlocks::Dawn:        return TEXT("Dawn");
+	case ECT_TimeBlocks::Morning:     return TEXT("Morning");
+	case ECT_TimeBlocks::Midday:      return TEXT("Midday");
+	case ECT_TimeBlocks::Afternoon:   return TEXT("Afternoon");
+	case ECT_TimeBlocks::Dusk:        return TEXT("Dusk");
+	case ECT_TimeBlocks::Evening:     return TEXT("Evening");
+	case ECT_TimeBlocks::Night:       return TEXT("Night");
+	case ECT_TimeBlocks::DarkestHour: return TEXT("DarkestHour");
 	default:                         return TEXT("?");
 	}
 }
@@ -172,7 +172,7 @@ FText UCT_EventSchedulerSubsystem::GetScheduledEventDebugMultiline() const
 
 
 
-void UCT_EventSchedulerSubsystem::HandleTimeUpdated(int32 NewDay, int32 NewMinutes, ECT_TimeBlock NewBlock)
+void UCT_EventSchedulerSubsystem::HandleTimeUpdated(int32 NewDay, int32 NewMinutes, ECT_TimeBlocks NewBlock)
 {
 	UE_LOG(LogTemp, Log, TEXT("[CT] Scheduler got time update: Day %d, Min %d"), NewDay, NewMinutes);
 	const bool bDayChanged = (NewDay != CachedDay);
@@ -206,7 +206,7 @@ TArray<FName> UCT_EventSchedulerSubsystem::GetScheduledEventNames() const
 }
 
 
-void UCT_EventSchedulerSubsystem::EvaluateAndFire(int32 Day, ECT_TimeBlock Block)
+void UCT_EventSchedulerSubsystem::EvaluateAndFire(int32 Day, ECT_TimeBlocks Block)
 {
 	for (int32 i = Events.Num() - 1; i >= 0; --i)
 	{
